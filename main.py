@@ -7,7 +7,8 @@ BASE_URL = "https://cses.fi"
 
 
 def scrape_task_details(task_href):
-    r = requests.get(f"{BASE_URL}{task_href}")
+    url = f"{BASE_URL}{task_href}"
+    r = requests.get(url)
 
     if not r.ok:
         raise RuntimeError(r)
@@ -27,7 +28,9 @@ def scrape_task_details(task_href):
         return
 
     filename = filenames[0]
-    return (filename, boilerplate.text)
+    boilerplate = f"# {url} \n\n{boilerplate.text}"
+
+    return (filename, boilerplate)
 
 
 def scrape_task_list(course_name):
@@ -41,7 +44,6 @@ def scrape_task_list(course_name):
     soup = BeautifulSoup(r.content, "html.parser")
     task_lists = soup.find_all("ul", class_="task-list")
     titles = soup.find_all("h2")
-
 
     print("\033[97m [i] INFO: Scraping task details...\033[0m")
     task_list = []
